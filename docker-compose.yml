@@ -1,0 +1,32 @@
+version: '3'
+services:
+  postgres: # Це ім'я сервісу PostgreSQL
+    image: postgres:12
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_DB: hw02
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 567234
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+  app:
+    build: .
+    container_name: app-service
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: "postgresql+psycopg2://postgres:567234@postgres:5432/hw02"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
